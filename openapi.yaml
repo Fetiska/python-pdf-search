@@ -1,0 +1,53 @@
+openapi: 3.0.3
+info:
+  title: поиск по pdf
+  version: 0.1.0
+  description: кейс 10, спецификация будущего сервера
+paths:
+  /documents:
+    get:
+      summary: поиск документов
+      description: до 10 текстовых pdf по убыванию релевантности tf-idf, регистр не учитывается, лемматизации и стемминга нет
+      parameters:
+        - name: q
+          in: query
+          required: true
+          description: поисковая фраза
+          schema:
+            type: string
+            minLength: 1
+            pattern: '\S'
+          example: охрана труда
+      responses:
+        '200':
+          description: найденные файлы с фрагментами текста, если совпадений нет — пустой массив
+          content:
+            application/json:
+              schema:
+                type: array
+                maxItems: 10
+                items:
+                  type: object
+                  required: [file, snippet]
+                  properties:
+                    file:
+                      type: string
+                      description: путь к pdf относительно настроенной папки
+                    snippet:
+                      type: string
+                      description: фрагмент с найденным словом
+              example:
+                - file: safety.pdf
+                  snippet: инструкция по охране труда
+        '400':
+          description: параметр q отсутствует, пуст или содержит только пробелы
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [error]
+                properties:
+                  error:
+                    type: string
+              example:
+                error: укажите поисковый запрос
