@@ -1,0 +1,33 @@
+openapi: 3.0.3
+info:
+  title: поиск по pdf
+  version: 0.1.0
+paths:
+  /documents:
+    get:
+      summary: поиск документов
+      parameters:
+        - name: q
+          in: query
+          required: true
+          schema:
+            type: string
+            minLength: 1
+      responses:
+        '200':
+          description: список найденных документов; без совпадений — пустой массив
+          content:
+            application/json:
+              schema:
+                type: array
+                maxItems: 10
+                items:
+                  type: object
+                  required: [file, snippet]
+                  properties:
+                    file:
+                      type: string
+                    snippet:
+                      type: string
+        '400':
+          description: параметр q отсутствует или пуст
